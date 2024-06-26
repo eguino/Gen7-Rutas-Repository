@@ -1,3 +1,4 @@
+com\eguino\app\rutas\controllers\DetalleChoferServlet.class
 com\eguino\app\rutas\repositories\ChoferesRepository.class
 com\eguino\app\rutas\models\Chofer.class
 com\eguino\app\rutas\models\enums\Tipos.class

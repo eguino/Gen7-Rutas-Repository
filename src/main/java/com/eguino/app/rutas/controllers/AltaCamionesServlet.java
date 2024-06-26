@@ -79,6 +79,7 @@ public class AltaCamionesServlet extends HttpServlet {
             camion.setKilometraje(Double.parseDouble(kilometraje));
             camion.setDisponibilidad(habilitar);
             service.guardar(camion);
+            resp.sendRedirect("listar");
         } else {
             req.setAttribute("errores",errores);
             getServletContext().getRequestDispatcher("/altaCamion.jsp")

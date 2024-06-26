@@ -3,6 +3,7 @@ C:\Users\TRPad02\Desktop\Proyectos\Java\Gen7-Rutas\src\main\java\com\eguino\app\
 C:\Users\TRPad02\Desktop\Proyectos\Java\Gen7-Rutas\src\main\java\com\eguino\app\rutas\controllers\AltaCamionesServlet.java
 C:\Users\TRPad02\Desktop\Proyectos\Java\Gen7-Rutas\src\main\java\com\eguino\app\rutas\models\Chofer.java
 C:\Users\TRPad02\Desktop\Proyectos\Java\Gen7-Rutas\src\main\java\com\eguino\app\rutas\repositories\ChoferesRepository.java
+C:\Users\TRPad02\Desktop\Proyectos\Java\Gen7-Rutas\src\main\java\com\eguino\app\rutas\controllers\DetalleChoferServlet.java
 C:\Users\TRPad02\Desktop\Proyectos\Java\Gen7-Rutas\src\main\java\com\eguino\app\rutas\filter\ConexionFilter.java
 C:\Users\TRPad02\Desktop\Proyectos\Java\Gen7-Rutas\src\main\java\com\eguino\app\rutas\services\IService.java
 C:\Users\TRPad02\Desktop\Proyectos\Java\Gen7-Rutas\src\main\java\com\eguino\app\rutas\controllers\AltaChoferServlet.java
