@@ -1,6 +1,7 @@
 package com.eguino.app.rutas.repositories;
 
 import com.eguino.app.rutas.models.Camion;
+import com.eguino.app.rutas.models.Chofer;
 import com.eguino.app.rutas.models.enums.Marcas;
 import com.eguino.app.rutas.models.enums.Tipos;
 
@@ -32,7 +33,17 @@ public class CamionesRepository implements IRepository<Camion> {
 
     @Override
     public Camion getById(Long id) throws SQLException {
-        return null;
+        Camion camion = null;
+        try (PreparedStatement stmt =
+                     conn.prepareStatement("SELECT * FROM camiones WHERE ID_CAMION= ?")) {
+            stmt.setLong(1,id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()){
+                    camion = this.getCamion(rs);
+                }
+            }
+        }
+        return camion;
     }
 
     @Override
@@ -75,7 +86,11 @@ public class CamionesRepository implements IRepository<Camion> {
 
     @Override
     public void eliminar(Long id) throws SQLException {
-
+        String sql = "delete from camiones where id_camion =?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1,id);
+            stmt.executeUpdate();
+        }
     }
 
     private Camion getCamion(ResultSet rs) throws SQLException {
