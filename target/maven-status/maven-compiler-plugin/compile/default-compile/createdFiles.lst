@@ -6,6 +6,7 @@ com\eguino\app\rutas\services\IService.class
 com\eguino\app\rutas\controllers\AltaCamionesServlet.class
 com\eguino\app\rutas\models\Camion.class
 com\eguino\app\rutas\utils\ConexionBD.class
+com\eguino\app\rutas\controllers\EliminarChoferServlet.class
 com\eguino\app\rutas\controllers\ListaChoferesServlet.class
 com\eguino\app\rutas\controllers\AltaChoferServlet.class
 com\eguino\app\rutas\repositories\IRepository.class

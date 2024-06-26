@@ -85,7 +85,11 @@ public class ChoferesRepository implements IRepository<Chofer> {
 
     @Override
     public void eliminar(Long id) throws SQLException {
-
+        String sql = "delete from choferes where id_chofer =?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1,id);
+            stmt.executeUpdate();
+        }
     }
 
     private Chofer getChofer(ResultSet rs) throws SQLException {
