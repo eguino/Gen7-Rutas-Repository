@@ -123,14 +123,16 @@
                     </div>
 
                     <div class="form-group">
-                                            <label for="modelo">Modelo</label>
-                                            <select name="modelo" id="modelo" class="form-control">
-                                                <option value="">---Seleccionar---</option>
-                                                <% for (int x = minimo; x <= maximo; x++) { %>
-                                                    <option value="<%= x %>" <%= x == camion.getModelo() ? "selected" : "" %>><%= x %></option>
-                                                <% } %>
-                                             </select>
-                                        </div>
+                        <label for="modelo">Modelo</label>
+                        <select name="modelo" id="modelo" class="form-control">
+                            <option value="0">---Seleccionar---</option>
+                            <% if (minimo != null && maximo != null) { %>
+                                <% for(int x = minimo; x <= maximo; x++) { %>
+                                    <option value="<%= x %>" <%= x == camion.getModelo() ? "selected" : "" %>><%= x %></option>
+                                <% } %>
+                            <% } %>
+                         </select>
+                    </div>
 
                     <div class="form-group">
                         <label for="marca">Marca</label>
