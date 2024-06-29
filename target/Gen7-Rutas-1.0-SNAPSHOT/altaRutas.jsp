@@ -6,6 +6,7 @@
     //recuperamos la lista de choferes que seteamos en el request desde el servlet
     List<Chofer> choferes =  (List<Chofer>) request.getAttribute("choferes");
     List<Camion> camiones =  (List<Camion>) request.getAttribute("camiones");
+    Map<String, String> errores = (Map<String,String>) request.getAttribute("errores");
 %>
 
 <!DOCTYPE html>
@@ -92,6 +93,16 @@
             </div>
             <div style="display: block;"><input type="hidden" name="" id="txtEsOD"></div>
         </div>
+
+        <br>
+                <% if(errores != null && errores.size()>0){ %>
+                    <ul class="alert alert-danger mx-5 px5">
+                        <% for(String error: errores.values()){ %>
+                            <li><%=error%></li>
+                        <% } %>
+                    </ul>
+                <% } %>
+
         <form id="formRuta" action="<%=request.getContextPath()%>/rutas/alta" method="post">
             <div class="row">
                 <div class="col-md-6">
@@ -134,10 +145,7 @@
                     <div class="form-group">
                         <label for="">Fecha Salida</label>
                         <div class="input-group date">
-                            <input type="text" name="FSalida" id="FSalida" class="form-control" value="${param.FSalida}">
-                            <div class="input-group-addon">
-                                <span class="glyphicon glyphicon-th"></span>
-                            </div>
+                            <input type="datetime-local" name="FSalida" id="FSalida" class="form-control" value="${param.FSalida}">
                         </div>
                         <!-- <input type="date" name="FSalida" id="FSalida"
                         class="form-control" onkeydown="return false"> -->
@@ -189,10 +197,7 @@
                     <div class="form-group">
                         <label for="">Fecha Estimada de Llegada</label>
                         <div class="input-group date">
-                            <input type="text" name="FELlegada" id="FELlegada" class="form-control" value="${param.FELlegada}">
-                            <div class="input-group-addon">
-                                <span class="glyphicon glyphicon-th"></span>
-                            </div>
+                            <input type="datetime-local" name="FELlegada" id="FELlegada" class="form-control" value="${param.FELlegada}">
                         </div>
                         <!-- <input type="date" name="FELlegada" id="FELlegada"
                         class="form-control" onkeydown="return false"> -->
@@ -318,20 +323,6 @@
 
     <script>
         $(document).ready(function() {
-            $('#FSalida').datepicker({
-                format: 'dd/mm/yyyy', // Formato de fecha deseado
-                autoclose: true,
-                todayHighlight: true,
-                language: 'es', // Opcional: idioma español
-            });
-
-            $('#FELlegada').datepicker({
-                format: 'dd/mm/yyyy', // Formato de fecha deseado
-                autoclose: true,
-                todayHighlight: true,
-                language: 'es', // Opcional: idioma español
-            });
-
             // Función para cargar las direcciones en los select al cargar la página
         	cargarDirecciones();
 
@@ -444,37 +435,44 @@
 
                 function calculateArrivalDate(duration) {
                     var startDate = $("#FSalida").val();
+                    console.log("Fecha inicial: ", startDate);
+
                     if (startDate && duration) {
+                        // Parsear la fecha y hora inicial
+                        var dateObject = new Date(startDate);
+
                         var durationParts = duration.split(" ");
                         var hours = 0, minutes = 0;
                         for (var i = 0; i < durationParts.length; i++) {
                             if (durationParts[i].includes("hour") || durationParts[i].includes("hours")) {
-                                hours = parseInt(durationParts[i-1]);
+                                hours = parseInt(durationParts[i - 1]);
                             }
                             if (durationParts[i].includes("min") || durationParts[i].includes("minutes")) {
-                                minutes = parseInt(durationParts[i-1]);
+                                minutes = parseInt(durationParts[i - 1]);
                             }
                         }
-                        var dateParts = startDate.split("/");
-                        var dateObject = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
 
-                        var now = new Date();
-                        dateObject.setHours(now.getHours());
-                        dateObject.setMinutes(now.getMinutes());
+                        console.log("Horas extraídas: ", hours);
+                        console.log("Minutos extraídos: ", minutes);
 
                         dateObject.setHours(dateObject.getHours() + hours);
                         dateObject.setMinutes(dateObject.getMinutes() + minutes);
 
-                        var dd = String(dateObject.getDate()).padStart(2, '0');
-                        var mm = String(dateObject.getMonth() + 1).padStart(2, '0'); // Enero es 0
-                        var yyyy = dateObject.getFullYear();
-                        var hh = String(dateObject.getHours()).padStart(2, '0');
-                        var min = String(dateObject.getMinutes()).padStart(2, '0');
+                        var year = dateObject.getFullYear();
+                        var month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                        var day = String(dateObject.getDate()).padStart(2, '0');
+                        var hour = String(dateObject.getHours()).padStart(2, '0');
+                        var minute = String(dateObject.getMinutes()).padStart(2, '0');
 
-                        var formattedDate = dd + '/' + mm + '/' + yyyy;
+                        var formattedDate = year + "-" + month +"-" + day + "T" + hour + ":" + minute;
+
                         $("#FELlegada").val(formattedDate);
+                    } else {
+                        console.error("Faltan datos: startDate o duration no están definidos.");
                     }
                 }
+
+
 
         });
 

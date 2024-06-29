@@ -17,9 +17,11 @@ import java.io.Console;
 import java.io.IOException;
 import java.sql.Connection;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,59 +52,91 @@ public class AltaRutaServlet extends HttpServlet {
         String fELlegada = req.getParameter("FELlegada");
         String distancia = req.getParameter("distancia");
 
-        float distanciaF = convertirAFloat(distancia);
-
-        LocalDate fechaSal;
-        LocalDate fechaELleg;
-        try{
-            fechaSal = LocalDate.parse(fSalida,
-                    DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        } catch (DateTimeParseException e){
-            fechaSal = null;
+        Map<String, String> errores = new HashMap<>();
+        if (chofer == null || chofer.isBlank()) {
+            errores.put("chofer", "¡El chofer es requerido!");
         }
-
-        try{
-            fechaELleg = LocalDate.parse(fELlegada,
-                    DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        } catch (DateTimeParseException e){
-            fechaELleg = null;
+        if (camion == null || camion.isBlank()) {
+            errores.put("camion", "¡El camión es requerido!");
         }
-
-        Ruta ruta = new Ruta();
-        ruta.setId(0L);
-        ruta.setChoferId(Long.parseLong(chofer));
-        ruta.setCamionId(Long.parseLong(camion));
-        ruta.setDireccionOrigenId(Long.parseLong(origen));
-        ruta.setDireccionDestinoId(Long.parseLong(destino));
-        ruta.setFechaSalida(fechaSal);
-        ruta.setFechaLlegadaEstimada(fechaELleg);
-        ruta.setDistancia(distanciaF);
-
-        Long idRuta = rutaService.guardarReturnId(ruta);
-
-        System.out.println(ruta);
-
-        String cargamentosJson = req.getParameter("cargamentos");
-        System.out.println("Cargamentos JSON: " + cargamentosJson);
-        List<Map<String, String>> cargamentos = new Gson().fromJson(cargamentosJson, ArrayList.class);
-
-        // Aquí puedes guardar los datos de cargamento en tu base de datos
-        for (Map<String, String> cargamento : cargamentos) {
-            String descripcion = cargamento.get("descripcion");
-            String peso = cargamento.get("peso");
-
-            System.out.println(descripcion);
-            System.out.println(peso);
-
-            Cargamento c = new Cargamento();
-            c.setRuta_id(idRuta);
-            c.setDescripcion(descripcion);
-            c.setPeso(Float.parseFloat(peso));
-            c.setEstatus(1);
-            cargamentoService.guardar(c);
+        if (origen == null || origen.isBlank()) {
+            errores.put("origen", "¡El origen es requerido!");
         }
+        if (destino == null || destino.isBlank()) {
+            errores.put("destino", "¡El destino es requerido!");
+        }
+        if (fSalida == null || fSalida.isBlank()) {
+            errores.put("fSalida", "¡La fecha de salida es requerida!");
+        }
+        if (fELlegada == null || fELlegada.isBlank()) {
+            errores.put("fELlegada", "¡La fecha de llegada estimada es requerida!");
+        }
+        if (distancia == null || distancia.isBlank()) {
+            errores.put("distancia", "¡La distancia es requerida!");
+        }
+        if (errores.isEmpty()) {
+            float distanciaF = convertirAFloat(distancia);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+            String aux;
 
-        resp.sendRedirect("listar");
+            LocalDate fechaSal;
+            LocalDate fechaELleg;
+            try{
+                LocalDateTime fSalidaAux = LocalDateTime.parse(fSalida);
+                fechaSal = fSalidaAux.toLocalDate();
+            } catch (DateTimeParseException e){
+                fechaSal = null;
+            }
+
+            try{
+                LocalDateTime fechaELlegAux = LocalDateTime.parse(fELlegada);
+                fechaELleg = fechaELlegAux.toLocalDate();
+            } catch (DateTimeParseException e){
+                fechaELleg = null;
+            }
+
+            Ruta ruta = new Ruta();
+            ruta.setId(0L);
+            ruta.setChoferId(Long.parseLong(chofer));
+            ruta.setCamionId(Long.parseLong(camion));
+            ruta.setDireccionOrigenId(Long.parseLong(origen));
+            ruta.setDireccionDestinoId(Long.parseLong(destino));
+            ruta.setFechaSalida(fechaSal);
+            ruta.setFechaLlegadaEstimada(fechaELleg);
+            ruta.setDistancia(distanciaF);
+
+            Long idRuta = rutaService.guardarReturnId(ruta);
+
+            System.out.println(ruta);
+
+            String cargamentosJson = req.getParameter("cargamentos");
+            System.out.println("Cargamentos JSON: " + cargamentosJson);
+            List<Map<String, String>> cargamentos = new Gson().fromJson(cargamentosJson, ArrayList.class);
+
+            // Aquí puedes guardar los datos de cargamento en tu base de datos
+            for (Map<String, String> cargamento : cargamentos) {
+                String descripcion = cargamento.get("descripcion");
+                String peso = cargamento.get("peso");
+
+                System.out.println(descripcion);
+                System.out.println(peso);
+
+                Cargamento c = new Cargamento();
+                c.setRuta_id(idRuta);
+                c.setDescripcion(descripcion);
+                c.setPeso(Float.parseFloat(peso));
+                c.setEstatus(1);
+                cargamentoService.guardar(c);
+            }
+
+            resp.sendRedirect("listar");
+        } else {
+            req.setAttribute("errores",errores);
+            req.setAttribute("camiones",rutaService.listarCamiones());
+            req.setAttribute("choferes",rutaService.listarChoferes());
+            getServletContext().getRequestDispatcher("/altaRutas.jsp")
+                    .forward(req,resp);
+        }
     }
 
     public static float convertirAFloat(String texto) {

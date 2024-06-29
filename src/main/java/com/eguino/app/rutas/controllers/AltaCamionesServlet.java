@@ -50,9 +50,7 @@ public class AltaCamionesServlet extends HttpServlet {
             habilitar = false;
         }
         Map<String, String> errores = new HashMap<>();
-        if (matricula == null || matricula.isBlank()) {
-            errores.put("matricula", "¡La matricula es requerida!");
-        }
+
         if (tipoCamion == null || tipoCamion.isBlank()){
             errores.put("tipoCamion","¡El tipo de camión paterno es requerido!");
         }
