@@ -1,4 +1,6 @@
+com\eguino\app\rutas\repositories\CargamentoRepository.class
 com\eguino\app\rutas\repositories\ChoferesRepository.class
+com\eguino\app\rutas\models\Cargamento.class
 com\eguino\app\rutas\repositories\IRutasRepository.class
 com\eguino\app\rutas\utils\ConexionBD.class
 com\eguino\app\rutas\controllers\EdicionChoferServlet.class
@@ -12,6 +14,8 @@ com\eguino\app\rutas\repositories\RutasRepository.class
 com\eguino\app\rutas\filter\ConexionFilter.class
 com\eguino\app\rutas\controllers\EliminarCamionServlet.class
 com\eguino\app\rutas\controllers\DetalleChoferServlet.class
+com\eguino\app\rutas\controllers\CapacidadCamionServlet.class
+com\eguino\app\rutas\controllers\ListaRutasServlet.class
 com\eguino\app\rutas\models\Chofer.class
 com\eguino\app\rutas\models\enums\Tipos.class
 com\eguino\app\rutas\services\IService.class
@@ -20,6 +24,7 @@ com\eguino\app\rutas\models\Camion.class
 com\eguino\app\rutas\models\Ruta.class
 com\eguino\app\rutas\controllers\AltaRutaServlet.class
 com\eguino\app\rutas\services\CamionesService.class
+com\eguino\app\rutas\services\CargamentoService.class
 com\eguino\app\rutas\services\IRutasService.class
 com\eguino\app\rutas\controllers\EdicionCamionServlet.class
 com\eguino\app\rutas\models\enums\Marcas.class

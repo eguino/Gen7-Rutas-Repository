@@ -2,6 +2,7 @@ package com.eguino.app.rutas.repositories;
 
 import com.eguino.app.rutas.models.Chofer;
 
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,8 @@ public class ChoferesRepository implements IRepository<Chofer> {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1,id);
             stmt.executeUpdate();
+        } catch (SQLIntegrityConstraintViolationException e){
+            throw new SQLException("No se puede eliminar el chofer debido a que está registrado en una ruta.",e);
         }
     }
 

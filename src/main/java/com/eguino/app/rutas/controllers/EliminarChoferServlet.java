@@ -10,7 +10,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Optional;
 
 @WebServlet ("/choferes/eliminar")
@@ -29,8 +31,14 @@ public class EliminarChoferServlet extends HttpServlet {
         if (id > 0){
             Optional<Chofer> o = service.getById(id);
             if(o.isPresent()) {
-                service.eliminar(id);
-                resp.sendRedirect(req.getContextPath() + "/choferes/listar");
+                try {
+                    service.eliminar(id);
+                    resp.sendRedirect(req.getContextPath() + "/choferes/listar");
+                } catch (Exception e) {
+                    req.setAttribute("message", e.getMessage());
+                    req.setAttribute("path", req.getContextPath() + "/choferes/listar");
+                    req.getRequestDispatcher("/resultado.jsp").forward(req, resp);
+                }
             } else {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND,
                         "No existe el chofer en la base de datos.");

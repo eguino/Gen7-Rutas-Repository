@@ -90,6 +90,8 @@ public class CamionesRepository implements IRepository<Camion> {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1,id);
             stmt.executeUpdate();
+        } catch (SQLIntegrityConstraintViolationException e){
+            throw new SQLException("No se puede eliminar el camión debido a que está registrado en una ruta.",e);
         }
     }
 

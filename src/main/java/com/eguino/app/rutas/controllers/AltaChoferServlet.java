@@ -35,6 +35,7 @@ public class AltaChoferServlet extends HttpServlet {
         String licencia = req.getParameter("licencia");
         String telefono = req.getParameter("telefono");
         String fechaNacimiento = req.getParameter("fechaNacimiento");
+
         LocalDate fecha;
         try{
             fecha = LocalDate.parse(fechaNacimiento,
@@ -42,6 +43,8 @@ public class AltaChoferServlet extends HttpServlet {
         } catch (DateTimeParseException e){
             fecha = null;
         }
+
+        System.out.println(fecha);
 
         String checkbox[];
         checkbox = req.getParameterValues("disponibilidad");

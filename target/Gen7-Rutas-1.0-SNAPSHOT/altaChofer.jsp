@@ -149,14 +149,15 @@
 
                     <div class="form-group">
                         <label for="">Fecha de Nacimiento</label>
-                        <input type="text" name="fechaNacimiento" id="fechaNacimiento"
-                            class="form-control" value="${param.fechaNacimiento}">
-                            <%
-                                if(errores != null && errores.containsKey("fechaNacimiento")){
-                                    out.println("<span class='text-danger'>" + errores.get("fechaNacimiento")
-                                        + "</span>");
-                                }
-                            %>
+                        <div class="input-group date">
+                            <input type="text" name="fechaNacimiento" id="fechaNacimiento" class="form-control" value="${param.fechaNacimiento}">
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-th"></span>
+                            </div>
+                        </div>
+                            <% if(errores != null && errores.containsKey("fechaNacimiento")){
+                                out.println("<span class='text-danger'>" + errores.get("fechaNacimiento") + "</span>");
+                                } %>
                     </div>
 
                     <div class="form-group">
@@ -172,5 +173,27 @@
             </form>
         </div>
     </div>
+
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+                integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+                crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+
+        <script>
+            $(document).ready(function() {
+                $('#fechaNacimiento').datepicker({
+                    format: 'dd/mm/yyyy', // Formato de fecha deseado
+                    autoclose: true,
+                    todayHighlight: true,
+                    language: 'es', // Opcional: idioma español
+                    startDate: '-100y', // Opcional: fecha mínima
+                    endDate: '+0d' // Opcional: fecha máxima (hasta hoy)
+                });
+            });
+        </script>
 </body>
 </html>

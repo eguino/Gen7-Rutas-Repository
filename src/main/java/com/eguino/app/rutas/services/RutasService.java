@@ -50,7 +50,11 @@ public class RutasService implements IRutasService {
 
     @Override
     public List<Ruta> listar() {
-        return List.of();
+        try{
+            return rutasRepository.listar();
+        } catch (SQLException e){
+            throw new RuntimeException(e.getMessage(),e.getCause());
+        }
     }
 
     @Override

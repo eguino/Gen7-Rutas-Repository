@@ -29,8 +29,14 @@ public class EliminarCamionServlet extends HttpServlet {
         if (id > 0){
             Optional<Camion> o = service.getById(id);
             if(o.isPresent()) {
-                service.eliminar(id);
-                resp.sendRedirect(req.getContextPath() + "/camiones/listar");
+                try {
+                    service.eliminar(id);
+                    resp.sendRedirect(req.getContextPath() + "/camiones/listar");
+                } catch (Exception e) {
+                    req.setAttribute("message", e.getMessage());
+                    req.setAttribute("path", req.getContextPath() + "/camiones/listar");
+                    req.getRequestDispatcher("/resultado.jsp").forward(req, resp);
+                }
             } else {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND,
                         "No existe el camion en la base de datos.");
