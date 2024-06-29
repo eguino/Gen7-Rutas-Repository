@@ -92,7 +92,7 @@
             </div>
             <div style="display: block;"><input type="hidden" name="" id="txtEsOD"></div>
         </div>
-        <form action="<%=request.getContextPath()%>/rutas/alta" method="post">
+        <form id="formRuta" action="<%=request.getContextPath()%>/rutas/alta" method="post">
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -113,10 +113,10 @@
                                 <input type="hidden" name="idOrigen" id="idOrigen" class="form-control">
                             </div>
 
-                            <div class="col-md-3">
+                            <!-- <div class="col-md-3">
                                 <button class="btn btn-primary btn-xs" style="margin-top: 30px;"
                                     onclick="getDireccion(1)">Obtener Datos</button>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -168,10 +168,10 @@
                                 <input type="hidden" name="idDestino" id="idDestino" class="form-control">
                             </div>
 
-                            <div class="col-md-3">
+                            <!-- <div class="col-md-3">
                                 <button class="btn btn-primary btn-xs" style="margin-top: 30px;"
                                     onclick="getDireccion(2)">Obtener Datos</button>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -214,6 +214,7 @@
                     </div>
                 </div>
             </div>
+            <input type="hidden" name="cargamentos" id="cargamentos">
         </form>
 
 
@@ -378,6 +379,14 @@
                             $("#idDestino").val(selectedOption);
                         });
 
+                $("#origen").change(function() {
+                    getDireccion(1);
+                });
+
+                $("#destino").change(function() {
+                    getDireccion(2);
+                });
+
                 $("#camion").change(function() {
                     var selectedOption = $(this).val();
                     if (selectedOption) {
@@ -523,6 +532,7 @@
                             }
                         }
 
+                        console.log(results);
                         if (results[0].address_components.length > 0) {
                             if (fuente == 1) {
                                 $("#origen").val(results[0].formatted_address);
@@ -549,7 +559,7 @@
             var estado = $("#Estado").val();
             var CP = $("#CP").val();
 
-            console.log(CP);
+            var mensaje;
 
             $.ajax({
                 type: 'POST',
@@ -558,7 +568,9 @@
                     "estado":estado, "cp": CP
                 },
                 success: function(resp){
-                    console.log(resp);
+                    console.log("Response:", resp);
+                    resp = JSON.parse(resp);
+                    var mensaje = resp.message;
                     $("#myModal").modal('hide');
                     if($("#txtEsOD").val() == 1){
                         $("#idOrigen").val(resp.message);  // Aquí cambias 'idOrien' a 'idOrigen'
@@ -568,6 +580,12 @@
                     $(".loader").fadeOut("slow");
                 }
             });
+
+            if (fuente == 1) {
+                $("#idOrigen").val(mensaje);
+            } else {
+                $("#idDestino").val(mensaje);
+            }
         }
 
         function agregarCargamento() {
@@ -591,6 +609,22 @@
             }
         }
 
+        function prepararEnvio() {
+            var cargamentos = [];
+            var filas = document.getElementById("tablaCargamento").getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+            for (var i = 0; i < filas.length; i++) {
+                var descripcion = filas[i].cells[0].innerText;
+                var peso = filas[i].cells[1].innerText;
+                cargamentos.push({ descripcion: descripcion, peso: peso });
+            }
+
+            document.getElementById("cargamentos").value = JSON.stringify(cargamentos);
+
+            console.log("Cargamentos JSON:", cargamentosJson);
+        }
+
+        document.getElementById("formRuta").addEventListener("submit", prepararEnvio);
     </script>
 
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"

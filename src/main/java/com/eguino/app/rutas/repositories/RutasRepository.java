@@ -15,31 +15,43 @@ public class RutasRepository implements IRutasRepository {
 
     @Override
     public Long guardarReturnId(Ruta ruta) throws SQLException {
-        String sql = "";
-        Long resultado = -1L;
-        sql = "insert into rutas (ID_RUTA, CAMION_ID, CHOFER_ID, "
+        System.out.println("Entré a ruta repository");
+        String sql = "insert into rutas (ID_RUTA, CAMION_ID, CHOFER_ID, "
                 + "DIRECCION_ORIGEN_ID, DIRECCION_DESTINO_ID, "
-                + "DISTANCIA, FECHA_SALIDA, FECHA_LLEGADA_ESTIMADA. "
-                + "FECHA_LLEGADA_REAL, A_TIEMPO) "
-                + "VALUES (SEQUENCE4.NEXTVAL,?,?,?,?,?,?,?,?,?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql,
-                new String[]{"ID_RUTA"})) {
-            stmt.setLong(1,ruta.getCamionId());
-            stmt.setLong(2,ruta.getChoferId());
-            stmt.setLong(3,ruta.getDireccionOrigenId());
-            stmt.setLong(4,ruta.getDireccionDestinoId());
-            stmt.setFloat(5,ruta.getDistancia());
+                + "DISTANCIA, FECHA_SALIDA, FECHA_LLEGADA_ESTIMADA) "
+                + "VALUES (SEQUENCE4.NEXTVAL,?,?,?,?,?,?,?)";
+        Long resultado = -1L;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql, new String[]{"ID_RUTA"})) {
+            stmt.setLong(1, ruta.getCamionId());
+            stmt.setLong(2, ruta.getChoferId());
+            stmt.setLong(3, ruta.getDireccionOrigenId());
+            stmt.setLong(4, ruta.getDireccionDestinoId());
+            stmt.setFloat(5, ruta.getDistancia());
             stmt.setDate(6, Date.valueOf(ruta.getFechaSalida()));
             stmt.setDate(7, Date.valueOf(ruta.getFechaLlegadaEstimada()));
-            stmt.setDate(8, Date.valueOf(ruta.getFechaLlegadaEstimada()));
-            stmt.setInt(9,ruta.getaTiempo());
-            ResultSet rs = stmt.getGeneratedKeys();
-            if(rs.next()){
-                resultado = rs.getLong(1);
+
+            // Ejecutar la sentencia SQL
+            int affectedRows = stmt.executeUpdate();
+
+            // Asegurarse de que se ha insertado una fila
+            if (affectedRows == 0) {
+                throw new SQLException("La inserción de la ruta falló, no se insertaron filas.");
+            }
+
+            // Obtener las claves generadas
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    resultado = rs.getLong(1);
+                } else {
+                    throw new SQLException("La inserción de la ruta falló, no se obtuvo ningún ID.");
+                }
             }
         }
+
         return resultado;
     }
+
 
     @Override
     public List<Ruta> listar() throws SQLException {
@@ -63,7 +75,94 @@ public class RutasRepository implements IRutasRepository {
 
     @Override
     public void guardar(Ruta ruta) throws SQLException {
+        String sql = "";
+        if (ruta.getId() != null && ruta.getId() > 0) {
+            sql = "update rutas set camion_id=?, chofer_id=?, " +
+                    "direccion_origen_id=?, direccion_destino_id=?, " +
+                    "distancia=?, fecha_salida=?, fecha_llegada_estimada=? " +
+                    "where id_ruta=?";
+        } else {
+            sql = "insert into rutas(id_ruta, camion_id, chofer_id, " +
+                    "direccion_origen_id, direccion_destino_id, distancia, " +
+                    "fecha_salida, fecha_llegada_estimada) " +
+                    "values (SEQUENCE4.NEXTVAL,?,?,?,?,?,?,?)";
+        }
+        try (PreparedStatement stmt = conn.prepareStatement(sql)){
+            if(ruta.getId() != null && ruta.getId() > 0){
+                stmt.setLong(1,ruta.getCamionId());
+                stmt.setLong(2,ruta.getChoferId());
+                stmt.setLong(3,ruta.getDireccionOrigenId());
+                stmt.setLong(4,ruta.getDireccionDestinoId());
+                stmt.setFloat(5, ruta.getDistancia());
+                stmt.setDate(6, Date
+                        .valueOf(ruta.getFechaSalida()));
+                stmt.setDate(7, Date
+                        .valueOf(ruta.getFechaLlegadaEstimada()));
+                stmt.setLong(8, ruta.getId());
+            } else {
+                stmt.setLong(1,ruta.getCamionId());
+                stmt.setLong(2,ruta.getChoferId());
+                stmt.setLong(3,ruta.getDireccionOrigenId());
+                stmt.setLong(4,ruta.getDireccionDestinoId());
+                stmt.setFloat(5, ruta.getDistancia());
+                stmt.setDate(6, Date
+                        .valueOf(ruta.getFechaSalida()));
+                stmt.setDate(7, Date
+                        .valueOf(ruta.getFechaLlegadaEstimada()));
+            }
+            stmt.executeUpdate();
+        }
+    }
 
+    public Long guardarId(Ruta ruta) throws SQLException {
+        Ruta a;
+        try (Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT SEQUENCE4.NEXTVAL FROM DUAL;")) {
+            a = this.getRuta(rs);
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+        String sql = "";
+        if (ruta.getId() != null && ruta.getId() > 0) {
+            sql = "update rutas set camion_id=?, chofer_id=?, " +
+                    "direccion_origen_id=?, direccion_destino_id=?, " +
+                    "distancia=?, fecha_salida=?, fecha_llegada_estimada=? " +
+                    "where id_ruta=?";
+        } else {
+            sql = "insert into rutas(id_ruta, camion_id, chofer_id, " +
+                    "direccion_origen_id, direccion_destino_id, distancia, " +
+                    "fecha_salida, fecha_llegada_estimada) " +
+                    "values (?,?,?,?,?,?,?,?)";
+        }
+        try (PreparedStatement stmt = conn.prepareStatement(sql)){
+            if(ruta.getId() != null && ruta.getId() > 0){
+                stmt.setLong(1,ruta.getCamionId());
+                stmt.setLong(2,ruta.getChoferId());
+                stmt.setLong(3,ruta.getDireccionOrigenId());
+                stmt.setLong(4,ruta.getDireccionDestinoId());
+                stmt.setFloat(5, ruta.getDistancia());
+                stmt.setDate(6, Date
+                        .valueOf(ruta.getFechaSalida()));
+                stmt.setDate(7, Date
+                        .valueOf(ruta.getFechaLlegadaEstimada()));
+                stmt.setLong(8, ruta.getId());
+            } else {
+                stmt.setLong(1,a.getId());
+                stmt.setLong(2,ruta.getCamionId());
+                stmt.setLong(3,ruta.getChoferId());
+                stmt.setLong(4,ruta.getDireccionOrigenId());
+                stmt.setLong(5,ruta.getDireccionDestinoId());
+                stmt.setFloat(6, ruta.getDistancia());
+                stmt.setDate(7, Date
+                        .valueOf(ruta.getFechaSalida()));
+                stmt.setDate(8, Date
+                        .valueOf(ruta.getFechaLlegadaEstimada()));
+            }
+            stmt.executeUpdate();
+        }
+
+        return a.getId();
     }
 
     @Override

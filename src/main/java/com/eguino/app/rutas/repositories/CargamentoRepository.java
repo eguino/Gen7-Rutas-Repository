@@ -28,11 +28,11 @@ public class CargamentoRepository implements IRepository<Cargamento> {
     public void guardar(Cargamento cargamento) throws SQLException {
         String sql = "";
         if (cargamento.getIdCargamento() != null && cargamento.getIdCargamento() > 0) {
-            sql = "update cargamento set ruta_id=?, descripcion=?, " +
+            sql = "update cargamentos set ruta_id=?, descripcion=?, " +
                     "peso=?, estatus=? " +
                     "where id_cargamento=?";
         } else {
-            sql = "insert into cargamento(id_cargamento, ruta_id, " +
+            sql = "insert into cargamentos(id_cargamento, ruta_id, " +
                     "descripcion, peso, estatus) " +
                     "values (SEQUENCE2.NEXTVAL,?,?,?,?)";
         }

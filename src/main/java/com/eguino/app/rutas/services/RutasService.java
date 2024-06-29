@@ -64,7 +64,20 @@ public class RutasService implements IRutasService {
 
     @Override
     public void guardar(Ruta ruta) {
+        System.out.println("Entré al service :D "+ruta);
+        try{
+            rutasRepository.guardar(ruta);
+        } catch (SQLException e){
+            throw new RuntimeException(e.getMessage(),e.getCause());
+        }
+    }
 
+    public void guardarId(Ruta ruta) {
+        try{
+            rutasRepository.guardarReturnId(ruta);
+        } catch (SQLException e){
+            throw new RuntimeException(e.getMessage(),e.getCause());
+        }
     }
 
     @Override
